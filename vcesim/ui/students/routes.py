@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, UTC
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session
 from flask_login import login_required, current_user
 
 from vcesim.models.exam import Exam, Section, Question, Option, ExamAttempt, Answer
@@ -37,6 +37,15 @@ def start_exam(exam_id):
         )
         db.session.add(attempt)
         db.session.commit()
+
+        session["exam_state"] = {
+            "attempt_id": attempt.id,
+            "current_question": 0,
+            "answers": {},
+            "flagged": [],
+            "start_time": datetime.now(UTC).isoformat(),
+            "time_limit": exam.time_limit
+        }
 
         return redirect(url_for('student_bp.take_question',
                                 attempt_id=attempt.id,
@@ -104,13 +113,6 @@ def take_question(attempt_id, question_index):
                 attempt_id=attempt.id,
                 question_id=question.id,
                 flagged=True
-            )
-            db.session.add(answer)
-        for option_id in selected_options:
-            answer = Answer(
-                attempt_id=attempt.id,
-                question_id=question.id,
-                selected_option_id=int(option_id)
             )
             db.session.add(answer)
         db.session.commit()
