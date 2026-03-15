@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Exam Results</h2>
+
+<div class="card">
+    <div class="card-body">
+        <h4>Score: {{ attempt.score }}</h4>
+        <h5>
+            {% if attempt.passed %}
+            <span class="text-success">PASSED</span>
+            {% else %}
+            <span class="text-danger">FAILED</span>
+            {% endif %}
+        </h5>
+    </div>
+</div>
+
+<a href="{{ url_for('student.exam_list') }}" class="btn btn-primary mt-3">
+    Back to Exams
+</a>
+
+{% endblock %}

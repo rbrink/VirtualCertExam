@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Review Your Answers</h2>
+
+<div class="row">
+
+    {% for question in questions %}
+    {% set answers = attempt.answers | selectattr("question_id", "equalto", question.id) | list %}
+    {% set is_answered = answers | length > 0 %}
+    {% set is_flagged = answers | selectattr("flagged") | list | length > 0 %}
+
+    <div class="col-2 mb-3">
+        <a href="{{ url_for('student.take_question', attempt_id=attempt.id, question_index=loop.index0) }}" class="btn w-100
+           {% if is_flagged %} btn-warning
+           {% elif is_answered %} btn-success
+           {% else %} btn-outline-secondary
+           {% endif %}">
+            {{ loop.index }}
+        </a>
+    </div>
+    {% endfor %}
+
+</div>
+
+<hr>
+
+<a href="{{ url_for('student.submit_exam', attempt_id=attempt.id) }}" class="btn btn-danger">
+    Submit Exam
+</a>
+
+{% endblock %}

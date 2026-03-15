@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Manage Students</h2>
+<a href="{{ url_for('auth_bp.register') }}" class="btn btn-success mb-3">
+    Add New Student
+</a>
+<p class="text-muted">
+    Showing {{ students.items|length }} of {{ students.total }} students
+</p>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>E-mail</th>
+            <th>Course</th>
+            <th>Instructor</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for student in students.items %}
+            <tr>
+                <td>{{ student.first_name }}</td>
+                <td>{{ student.last_name }}</td>
+                <td>{{ student.email }}</td>
+                <td>{{ student.course }}</td>
+                <td>{{ student.instructor }}</td>
+                <td>
+                    <button class="btn btn-warning btn-sm reset-password-btn"
+                        data-user-id="{{ student.id }}"
+                        data-username="{{ student.username }}">Reset Password</button>
+                    
+                    <a href="{{ url_for('admin_bp.delete_student', user_id=student.id) }}" class="btn btn-sm btn-danger">
+                        Remove
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<nav>
+    <ul class="pagination">
+        {% if students.has_prev %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('admin_bp.list_students', page=students.prev_num) }}">
+                    Previous
+                </a>
+            </li>
+        {% endif %}
+        {% for page_num in students.iter_pages() %}
+            {% if page_num %}
+                <li class="page-item {% if page_num == students.page %}active{% endif %}">
+                    <a class="page-link" href="{{ url_for('admin_bp.list_students', page=page_num) }}">
+                        {{ page_num }}
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">_</span>
+                </li>
+            {% endif %}
+        {% endfor %}
+        {% if students.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('admin_bp.list_students', page=students.next_num) }}">
+                    Next
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+<a href="{{ url_for('admin_bp.dashboard') }}" class="btn btn-secondary">Back</a>
+
+<div class="modal fade" id="passwordModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Temporary Password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Username:</strong> <span id="modalUsername"></span></p>
+                <p><strong>Temporary Password:</strong></p>
+                <input type="text" id="modalPassword" class="form-control" readonly>
+                <p class="text-muted mt-2">
+                    Student must change this password upon first login.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="copyPassword()">
+                    Copy Password
+                </button>
+                <button class="btn btn-primary" data-bs-dismiss="modal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+{% block js %}
+{{ super() }}
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+        console.log('students page: wiring reset-password handlers')
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content
+        const resetBtns = document.querySelectorAll(".reset-password-btn")
+        console.log('found reset buttons:', resetBtns.length)
+        resetBtns.forEach(btn => {
+            btn.addEventListener("click", function(){
+                const userId = this.dataset.userId
+                fetch(`/reset-password/${userId}`, {
+                    method: "POST",
+                    headers: { "X-Requested-With": "XMLHttpRequest",
+                               "X-CSRFToken": csrfToken
+                    },
+                    credentials: "same-origin"
+                })
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById("modalUsername").innerText = data.username
+                    document.getElementById("modalPassword").value = data.password
+                    const modal = new bootstrap.Modal(
+                        document.getElementById("passwordModal")
+                    )
+                    modal.show()
+                })
+            })
+        })
+    })
+    function copyPassword(){
+        const field = document.getElementById("modalPassword")
+        field.select()
+        navigator.clipboard.writeText(field.value)
+            .catch(() => {
+                // fallback: select + execCommand (older browsers)
+                try { document.execCommand('copy') } catch(e) {}
+            })
+    }
+</script>
+{% endblock %}

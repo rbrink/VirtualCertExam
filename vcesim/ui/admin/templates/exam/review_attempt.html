@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Attempt Review</h2>
+    <div class="card p-3 mb-4">
+        <strong>User:</strong> {{ attempt.user.username }}<br>
+        <strong>Exam:</strong> {{ attempt.exam.title }}<br>
+        <strong>Score:</strong> {{ attempt.score }}<br>
+    </div>
+    {% for answer in answers %}
+    <div class="card mb-3 p-3">
+        <h5>{{ answer.question.question_text }}</h5>
+        <p>
+            Student Answer: {{ answer.selected_option }}
+        </p>
+        {% if answer.is_correct %}
+        <div class="text-success">Correct</div>
+        {% else %}
+        <div class="text-danger">Incorrect</div>
+        {% endif %}
+        <p class="mt-2">
+            <strong>Explanation:</strong>
+            {{ answer.question.explanation }}
+        </p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

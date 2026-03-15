@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Student Exam Attempts</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Exam</th>
+                <th>Score</th>
+                <th>Passed</th>
+                <th>Start</th>
+                <th>Review</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for attempt in attempts %}
+            <tr>
+                <td>{{ attempt.user.username }}</td>
+                <td>{{ attempt.exam.title }}</td>
+                <td>{{ attempt.score }}</td>
+                <td>
+                    {% if attempt.passed %}
+                    <span class="badge bg-success">PASS</span>
+                    {% else %}
+                    <span class="badge bg-danger">FAIL</span>
+                    {% endif %}
+                </td>
+                <td>{{ attempt.start_time }}</td>
+                <td>
+                    <a href="{{ url_for('admin.review_attempt', attempt_id=attempt.id) }}"
+                        class="btn btn-sm btn-primary">
+                        Review
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

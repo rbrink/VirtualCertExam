@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Manage Exams</h2>
+
+<a href="{{ url_for('admin_bp.create_exam') }}" class="btn btn-success mb-3">
+    Create New Exam
+</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Number</th>
+            <th>Version</th>
+            <th>Time Limit</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for exam in exams %}
+        <tr>
+            <td>{{ exam.title }}</td>
+            <td>{{ exam.number }}</td>
+            <td>{{ exam.version }}</td>
+            <td>{{ exam.time_limit }} min</td>
+            <td>
+                <a href="{{ url_for('admin_bp.manage_sections', exam_id=exam.id) }}"
+                    class="btn btn-sm btn-info">Sections</a>
+                <a href="{{ url_for('admin_bp.edit_exam', exam_id=exam.id) }}" class="btn btn-sm btn-primary">Edit</a>
+                <a href="{{ url_for('admin_bp.delete_exam', exam_id=exam.id) }}" class="btn btn-sm btn-danger">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<a href="{{ url_for('admin_bp.dashboard') }}" class="btn btn-secondary">Back</a>
+{% endblock %}

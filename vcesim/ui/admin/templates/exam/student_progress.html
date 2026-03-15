@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Student Progress</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Attempts</th>
+                <th>Average Score</th>
+                <th>Pass Rate</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in stats %}
+            <tr>
+                <td>{{ s.username }}</td>
+                <td>{{ s.attempts }}</td>
+                <td>{{ s.avg_score|round(1) }}</td>
+                <td>
+                    {{ ((s.passes / s.attempts) * 100)|round(1) }} %
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

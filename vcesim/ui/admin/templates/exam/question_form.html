@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>{{ "Edit Question" if question else "Add Question" }}</h2>
+
+<form method="post">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+        {{ form.question_text.label }}
+        {{ form.question_text(class="form-control", rows=4)}}
+        {% for err in form.question_text.errors %}
+            <div class="text-danger small">{{ err }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="mb-3 form-check">
+        {{ form.is_multianswer(type="checkbox", class="form-check-input") }}
+        {{ form.is_multianswer.label(class="form-check-label") }}
+    </div>
+
+        <hr>
+        <h5>Options</h5>
+
+        {% for opt in form.options %}
+        <div class="mb-2">
+            {{ opt.text(class_='form-control mb-1', placeholder=('Option %d' % loop.index)) }}
+            {% for err in opt.text.errors %}
+            <div class="text-danger small">{{ err }}</div>
+            {% endfor %}
+
+            <div class="form-check">
+                {{ opt.is_correct(class_='form-check-input') }}
+                <label class="form-check-label">Correct</label>
+            </div>
+        </div>
+        {% endfor %}
+
+        {% for err in form.options.errors %}
+        <div class="text-danger small">{{ err }}</div>
+        {% endfor %}
+
+        <hr>
+
+    <div class="mb-3">
+        {{ form.category.label }}
+        {{ form.category(class="form-control")}}
+    </div>
+
+    <div class="mb-3">
+        {{ form.complexity.label }}
+        {{ form.complexity(class="form-control") }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.explanation.label }}
+        {{ form.explanation(class="form-control") }}
+    </div>
+
+    {{ form.submit(class="btn btn-primary") }}
+    <a href="{{ url_for('admin_bp.manage_questions', section_id=section.id) }}" class="btn btn-secondary">Cancel</a>
+
+</form>
+
+{% endblock %}

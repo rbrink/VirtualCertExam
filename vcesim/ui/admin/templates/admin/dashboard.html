@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">Instructor Dashboard</h2>
+<div class="row">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5>Users</h5>
+                <h3>{{ total_students }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5>Exams</h5>
+                <h3>{{ total_exams }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5>Attempts</h5>
+                <h3>{{ total_exam_attempts }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5>Average Score</h5>
+                <h3>{{ avg_score }}%</h3>
+            </div>
+        </div>
+    </div>
+</div>
+<hr class="mt-4">
+<h4>Recent Attempts</h4>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Exam</th>
+            <th>Score</th>
+            <th>Started</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for attempt in recent_exam_attempts %}
+        <tr>
+            <td>{{ attempt.user.username }}</td>
+            <td>{{ attempt.exam.title }}</td>
+            <td>{{ attempt.percent }}%</td>
+            <td>{{ attempt.started_at.strftime("%Y-%m-%d %H:%M") }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<hr>
+<h4>Most Difficult Questions</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Question</th>
+            <th>Accuracy</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for q in hardest_questions %}
+        <tr>
+            <td>{{ q.question_text[:80] }}...</td>
+            <td>{{ (q.accuracy * 100)|round(1) }}%</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<canvas id="scoreChart"></canvas>
+{% endblock %}
+{% block js %}
+{{ super() }}
+<script>
+    const ctx = document.getElementById('scoreChart');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Pass', 'Fail'],
+            datasets: [{
+                label: 'Attempts',
+                data: [12, 5]
+            }]
+        }
+    });
+</script>
+{% endblock %}

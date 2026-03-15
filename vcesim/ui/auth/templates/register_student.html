@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h4>Register New Student</h4>
+    <form id="registerForm" method="POST">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.username.label(class="form-label") }}
+            {{ form.username(class="form-control") }}
+            <div class="invalid-feedback" id="error-username"></div>
+        </div>
+        <div class="mb-3">
+            {{ form.email.label(class="form-label") }}
+            {{ form.email(class="form-control") }}
+            <div class="invalid-feedback" id="error-email"></div>
+        </div>
+        <div class="mb-3">
+            {{ form.first_name.label(class="form-label") }}
+            {{ form.first_name(class="form-control") }}
+            <div class="invalid-feedback" id="error-first_name"></div>
+        </div>
+        <div class="mb-3">
+            {{ form.last_name.label(class="form-label") }}
+            {{ form.last_name(class="form-control") }}
+            <div class="invalid-feedback" id="error-last_name"></div>
+        </div>
+        <div class="mb-3">
+            {{ form.course.label(class="form-label") }}
+            {{ form.course(class="form-control") }}
+            <div class="invalid-feedback" id="error-course"></div>
+        </div>
+        <div class="mb-3">
+            {{ form.instructor.label(class="form-label") }}
+            {{ form.instructor(class="form-control") }}
+            <div class="invalid-feedback" id="error-instructor"></div>
+        </div>
+        <div class="mb-3">
+            {{ form.role.label(class="form-label") }}
+            {{ form.role(class="form-control") }}
+            <div class="invalid-feedback" id="error-role"></div>
+        </div>
+        {{ form.submit(class="btn btn-primary") }}
+    </form>
+</div>
+<!-- PASSWORD MODAL -->
+<div class="modal fade" id="passwordModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Temporary Password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Username:</strong> <span id="modalUsername"></span></p>
+                <p><strong>Temporary Password:</strong></p>
+                <input type="text" id="modalPassword" class="form-control" readonly>
+                <p class="text-muted mt-2">
+                    Student must change this password upon first login.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="copyPassword()">
+                    Copy Password
+                </button>
+                <button class="btn btn-primary" data-bs-dismiss="modal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+{{ super() }} 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("registerForm")
+        form.addEventListener("submit", function(e){
+            e.preventDefault()
+            const formData = new FormData(this)
+            // clear old errors
+            document.querySelectorAll(".invalid-feedback").forEach(el => el.textContent = "")
+            document.querySelectorAll(".form-control").forEach(el => el.classList.remove("is-invalid"))
+            fetch("/register",{
+                method: "POST",
+                body: formData,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                credentials: "same-origin"
+            })
+            .then(res => {
+                console.log("response:", res)
+                return res.json()
+            })
+            .then(data => {
+                if (!data.success) {
+                    for (const field in data.errors) {
+                        const input = document.querySelector(`[name="${field}"]`)
+                        const errorDiv = document.getElementById(`error-${field}`)
+                        if (input) input.classList.add("is-invalid")
+                        if (errorDiv) errorDiv.textContent = data.errors[field][0]
+                    }
+                    return
+                }
+                console.log("data:", data)
+                document.getElementById("modalUsername").innerText = data.username
+                document.getElementById("modalPassword").value = data.password
+                new bootstrap.Modal(
+                    document.getElementById("passwordModal")
+                ).show()
+                form.reset()
+            })
+            .catch(err => console.error(err))
+        })
+    })
+    function copyPassword(){
+        const passField = document.getElementById("modalPassword")
+        passField.select()
+        navigator.clipboard.writeText(passField.value)
+    }
+</script>
+{% endblock %}

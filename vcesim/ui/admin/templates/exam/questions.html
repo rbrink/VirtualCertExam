@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Questions - {{ section.name }}</h2>
+
+<a href="{{ url_for('admin_bp.manage_sections', exam_id=section.exam_id) }}" class="btn btn-secondary mb-3">Back to
+    Sections</a>
+
+<a href="{{ url_for('admin_bp.create_question', section_id=section.id) }}" class="btn btn-success mb-3">Add Question</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Question</th>
+            <th>Type</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for question in questions %}
+        <tr>
+            <td>{{ question.question_text[:80] }}...</td>
+            <td>
+                {{ "Multi-Answer" if question.is_multi_answer else "Single Answer" }}
+            </td>
+            <td>
+                <a href="{{ url_for('admin_bp.edit_question', question_id=question.id) }}"
+                    class="btn btn-primary btn-sm">Edit</a>
+
+                <a href="{{ url_for('admin_bp.delete_question', question_id=question.id) }}"
+                    class="btn btn-danger btn-sm">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

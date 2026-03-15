@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>{{ exam.title }}</h2>
+<p>{{ exam.description }}</p>
+
+<form method="post">
+    <div class="card p-4 mt-3">
+        <h5>Select Mode</h5>
+        <div class="form-check mt-3">
+            <input class="form-check-input" type="radio" name="mode" value="timed" checked>
+            <label class="form-check-label">
+                Timed ({{ exam.time_limit }} minutes)
+            </label>
+        </div>
+        <div class="form-check mt-2">
+            <input class="form-check-input" type="radio" name="mode" value="untimed">
+            <label class="form-check-label">
+                Untimed (Practice Mode)
+            </label>
+        </div>
+        <button class="btn btn-primary mt-4">
+            Begin Exam
+        </button>
+    </div>
+</form>
+{% endblock %}

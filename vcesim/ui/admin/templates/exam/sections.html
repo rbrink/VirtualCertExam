@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Sections - {{ exam.title }}</h2>
+
+<a href="{{ url_for('admin_bp.list_exams') }}" class="btn btn-secondary mb-3">
+    Back to Exams
+</a>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="post" action="{{ url_for('admin_bp.create_section', exam_id=exam.id) }}">
+            <div class="input-group">
+                <input type="text" name="name" class="form-control" placeholder="New Section Name" required>
+                <button class="btn btn-success">Add Section</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Section Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for section in sections %}
+        <tr>
+            <td>
+                <form method="post" action="{{ url_for('admin_bp.edit_section', section_id=section.id) }}">
+                    <div class="input-group">
+                        <input type="text" name="name" class="form-control" value="{{ section.name }}">
+                        <button class="btn btn-primary btn-sm">Update</button>
+                    </div>
+                </form>
+            </td>
+            <td>
+                <a href="{{ url_for('admin_bp.manage_questions', section_id=section.id) }}" class="btn btn-info btn-sm">
+                    Questions</a>
+                <a href="{{ url_for('admin_bp.delete_section', section_id=section.id) }}" class="btn btn-danger btn-sm">
+                    Delete
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

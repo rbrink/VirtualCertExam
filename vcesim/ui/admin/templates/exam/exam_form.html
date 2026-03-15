@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>{{ "Edit Exam" if exam else "Create Exam" }}</h2>
+
+<form method="post">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+        {{ form.title.label }}
+        {{ form.title(class="form-control") }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.exam_number.label }}
+        {{ form.exam_number(class="form-control") }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.version.label }}
+        {{ form.version(class="form-control") }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.passing_score.label }}
+        {{ form.passing_score(class="form-control") }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.time_limit.label }}
+        {{ form.time_limit(class="form-control") }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.description.label }}
+        {{ form.description(class="form-control") }}
+    </div>
+
+    {{ form.submit(class="btn btn-primary") }}
+    <a href="{{ url_for('admin_bp.list_exams') }}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

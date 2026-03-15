@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-fluid h-50 mx-auto">
+    <div class="col-sm-12 rounded text-center">
+        <img src="{{ url_for('static', filename='img/tech4fun80.png') }}" alt="[School Name] VCE">
+        <p class="text-center">
+            <h5>[School Name] - VCE System</h5>
+        </p>
+    </div>
+</div>
+<div class="container" style="display: flex; gap: 150px; justify-content: center;">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">WELCOME,</h5>
+            <p style="width: 300px; justify-content: left;">
+                Welcome to the [Course Name]
+                Simulator. Please log in
+                with your assigned credentials
+            </p>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Login</h4>
+            <form method="POST" action="{{ url_for('auth_bp.login') }}">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    {{ form.username.label(class="input-group-prepend") }}
+                    {{ form.username(class="form-control", placeholder="Username" ) }}
+                </div>
+                <div class="form-group">
+                    {{ form.password.label(class="input-group-prepend") }}
+                    {{ form.password(class="form-control", type="password", placeholder="Password")}}
+                </div>
+                <div class="form-group">
+                    {{ form.remember_me(type="checkbox") }}
+                    {{ form.remember_me.label }}
+                </div>
+                <div class="form-group" style="padding: 10px 10px 10px;">
+                    {{ form.submit(class="btn btn-secondary") }}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

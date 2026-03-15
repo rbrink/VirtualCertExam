@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Available Exams</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Version</th>
+            <th>Time Limit</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for exam in exams %}
+        <tr>
+            <td>{{ exam.title }}</td>
+            <td>{{ exam.version }}</td>
+            <td>{{ exam.time_limit }} min</td>
+            <td>
+                <a href="{{ url_for('student.start_exam', exam_id=exam.id) }}" class="btn btn-primary btn-sm">
+                    Start
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
