@@ -231,3 +231,41 @@ def reveal_answer(attempt_id, question_id):
         attempt=attempt,
         question=question
     )
+
+@student_bp.route("/attempt/<int:attempt_id>/autosave", methods=["POST"])
+@login_required
+def autosave_answer(attempt_id):
+
+    attempt = ExamAttempt.query.get_or_404(attempt_id)
+
+    question_id = int(request.form.get("question_id"))
+    selected_options = request.form.getlist("options")
+    is_flagged = request.form.get("flag") == "on"
+
+    Answer.query.filter_by(
+        attempt_id=attempt.id,
+        question_id=question_id
+    ).delete()
+
+    for option_id in selected_options:
+        db.session.add(
+            Answer(
+                attempt_id=attempt.id,
+                question_id=question_id,
+                selected_option_id=int(option_id),
+                flagged=is_flagged
+            )
+        )
+
+    if not selected_options and is_flagged:
+        db.session.add(
+            Answer(
+                attempt_id=attempt.id,
+                question_id=question_id,
+                flagged=True
+            )
+        )
+
+    db.session.commit()
+
+    return {"status": "saved"}
