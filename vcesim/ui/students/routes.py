@@ -70,7 +70,7 @@ def take_question(attempt_id, question_index):
     for section in exam.sections:
         questions.extend(section.questions)
     if question_index < 0:
-        question_indx = 0
+        question_index = 0
     if question_index >= len(questions):
         return redirect(url_for("student_bp.review_exam", attempt_id=attempt.id))
     question = questions[question_index]
@@ -85,7 +85,19 @@ def take_question(attempt_id, question_index):
         a.flagged for a in attempt.answers
         if a.question_id == question.id
     )
-
+    question_status = {}
+    for q in question:
+        answers = [
+            a for a in attempt.answers
+            if a.question_id == q.id
+        ]
+        answered = any(a.selected_option_id for a in answers)
+        flagged = any(a.flagged for a in answers)
+        question_status[q.id] = {
+            "answered": answered,
+            "flagged": flagged,
+        }
+    
     if request.method == "POST":
         # Remove old answers for this question
         Answer.query.filter_by(
@@ -127,7 +139,8 @@ def take_question(attempt_id, question_index):
                            questions=questions,
                            remaining_time=remaining_time,
                            selected_answers=selected_answers,
-                           flagged=flagged
+                           flagged=flagged,
+                           question_status=question_status
                            )
 
 @student_bp.route("/attempt/<int:attempt_id>/submit")
